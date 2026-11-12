@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { AuthService } from '../../../../core/auth/services/auth.service';
 import { NotificationsService } from '../../../../core/services/notifications.service';
+import { UserProfile, UsersService } from '../../../../core/services/users.service';
 import { SocialNotification } from '../../../../core/models/notification.interface';
 
 
@@ -14,7 +15,10 @@ import { SocialNotification } from '../../../../core/models/notification.interfa
 })
 export class NavbarComponent implements OnInit {
   private readonly authService = inject(AuthService)
+  private readonly usersService = inject(UsersService)
   readonly notificationsService = inject(NotificationsService)
+  currentUser = this.readCurrentUser();
+  profilePhotoFailed = false;
 
   isProfileMenuOpen = false;
   isNotificationsOpen = false;
@@ -26,6 +30,7 @@ ngOnInit(): void {
   this.notificationsService.getUnreadCount().subscribe({
     next: (response) => this.notificationsService.setUnreadCount(response.data.unreadCount),
   });
+  this.loadCurrentUserProfile();
 }
 
 toggleProfileMenu() {
@@ -75,6 +80,42 @@ loadNotificationPreview(): void {
 
 logout() :void {
   this.authService.signOut()
+}
+
+private readCurrentUser(): { name?: string; photo?: string | null } {
+  try {
+    const user = JSON.parse(localStorage.getItem('user') ?? 'null');
+    return user && typeof user === 'object' ? user : {};
+  } catch {
+    return {};
+  }
+}
+
+private loadCurrentUserProfile(): void {
+  this.usersService.getProfileData().subscribe({
+    next: (response) => {
+      const data = response.data;
+      const profile: UserProfile | undefined = data?.user
+        ?? data?.profile
+        ?? data?.profileData
+        ?? data?.userData
+        ?? data
+        ?? response.user
+        ?? response.profile;
+
+      if (profile) {
+        this.currentUser = {
+          name: profile.name ?? profile.fullName ?? this.currentUser.name,
+          photo: profile.photo ?? profile.profilePhoto ?? profile.avatar ?? null,
+        };
+        this.profilePhotoFailed = false;
+      }
+    },
+  });
+}
+
+onProfilePhotoError(): void {
+  this.profilePhotoFailed = true;
 }
 
 }

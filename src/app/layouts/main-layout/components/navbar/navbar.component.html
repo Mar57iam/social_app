@@ -145,9 +145,13 @@
         <button
           type="button"
           (click)="toggleProfileMenu()"
-          class="navbar-account-button w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center transition focus:outline-none"
+          class="navbar-account-button h-10 w-10 overflow-hidden rounded-full bg-gray-100 flex items-center justify-center transition focus:outline-none"
         >
-          <i class="fa-solid fa-user text-gray-700"></i>
+          @if (currentUser.photo && !profilePhotoFailed) {
+            <img [src]="currentUser.photo" [alt]="currentUser.name || 'Profile photo'" (error)="onProfilePhotoError()" class="h-full w-full object-cover" />
+          } @else {
+            <i class="fa-solid fa-user text-gray-700"></i>
+          }
         </button>
 
         <!-- Dropdown -->
@@ -160,9 +164,13 @@
               (click)="isProfileMenuOpen = false"
               class="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 transition"
             >
-              <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
-                <i class="fa-solid fa-user text-gray-600"></i>
-              </div>
+              @if (currentUser.photo && !profilePhotoFailed) {
+                <img [src]="currentUser.photo" [alt]="currentUser.name || 'Profile photo'" (error)="onProfilePhotoError()" class="h-10 w-10 rounded-full object-cover" />
+              } @else {
+                <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                  <i class="fa-solid fa-user text-gray-600"></i>
+                </div>
+              }
 
               <div>
                 <p class="text-sm font-semibold text-gray-800">My Profile</p>
