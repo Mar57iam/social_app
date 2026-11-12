@@ -1,0 +1,419 @@
+<div class="min-h-screen bg-white sm:bg- flex flex-col items-center justify-start py-10 px-4 font-sans">
+
+  <div class="w-full max-w-[500px]  space-y-5">
+
+    <!-- Back Arrow Icon -->
+    <div class="text-gray-800 cursor-pointer mb-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+    </div>
+
+    <!-- Header Section -->
+    <div class="space-y-2">
+      <div class="flex items-center gap-1.5 text-blue-600 font-bold text-lg">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+        </svg>
+        <span class="text-gray-900  font-bold tracking-tight text-base">SocialApp</span>
+      </div>
+
+      <h1 class="text-2xl w-[70%] sm:text-[26px] font-bold text-gray-900 tracking-tight leading-tight">
+        Get started on SocialApp with an account
+      </h1>
+
+      <p class="text-xs text-gray-500 leading-relaxed">
+        An account lets you access multiple features, connect with friends, easily and securely.
+      </p>
+    </div>
+
+
+    <!-- Form Section -->
+<form
+  [formGroup]="registerForm"
+  (ngSubmit)="onSubmit()"
+  class="space-y-6 pt-2"
+>
+
+  <!-- ================= Full Name ================= -->
+
+  <app-custom-input
+    label="Name"
+    placeholder="Full name"
+    formControlName="name"
+    [hasError]="!!(
+      registerForm.get('name')?.invalid &&
+      registerForm.get('name')?.touched
+    )"
+  >
+  </app-custom-input>
+
+  @if (
+    registerForm.get('name')?.invalid &&
+    registerForm.get('name')?.touched
+  ) {
+
+    @if (registerForm.get('name')?.hasError('required')) {
+      <p class="text-red-500 text-xs">
+        Name is required.
+      </p>
+    }
+
+    @if (registerForm.get('name')?.hasError('minlength')) {
+      <p class="text-red-500 text-xs">
+        Name must be at least 3 characters long.
+      </p>
+    }
+
+  }
+
+
+  <!-- ================= Username ================= -->
+
+  <app-custom-input
+    label="Username"
+    placeholder="Username"
+    formControlName="username"
+    [hasError]="!!(
+      registerForm.get('username')?.invalid &&
+      registerForm.get('username')?.touched
+    )"
+  >
+  </app-custom-input>
+
+  @if (
+  registerForm.get('username')?.invalid &&
+  registerForm.get('username')?.touched
+) {
+
+  @if (registerForm.get('username')?.hasError('required')) {
+    <p class="text-red-500 text-xs">
+      Username is required.
+    </p>
+  }
+
+  @if (registerForm.get('username')?.hasError('pattern')) {
+    <p class="text-red-500 text-xs">
+      Username must contain only lowercase letters, numbers, and underscores.
+    </p>
+  }
+
+}
+
+
+  <!-- ================= Email Address ================= -->
+
+  <app-custom-input
+    label="Email address"
+    type="email"
+    placeholder="Email address"
+    formControlName="email"
+    [hasError]="!!(
+      registerForm.get('email')?.invalid &&
+      registerForm.get('email')?.touched
+    )"
+  >
+  </app-custom-input>
+
+  @if (
+    registerForm.get('email')?.invalid &&
+    registerForm.get('email')?.touched
+  ) {
+
+    @if (registerForm.get('email')?.hasError('required')) {
+      <p class="text-red-500 text-xs">
+        Email is required.
+      </p>
+    }
+
+    @if (registerForm.get('email')?.hasError('email')) {
+      <p class="text-red-500 text-xs">
+        Please enter a valid email address.
+      </p>
+    }
+
+  }
+
+  <p class="text-[11px] text-gray-500">
+    You may receive notifications from us.
+    <a
+      href="#"
+      class="text-blue-600 font-medium hover:underline"
+    >
+      Learn why we ask for your contact information
+    </a>
+  </p>
+
+
+  <!-- ================= Date of Birth ================= -->
+
+  <app-custom-input
+    label="Date of birth"
+    type="date"
+    formControlName="dateOfBirth"
+    [hasError]="!!(
+      registerForm.get('dateOfBirth')?.invalid &&
+      registerForm.get('dateOfBirth')?.touched
+    )"
+  >
+  </app-custom-input>
+
+  @if (
+    registerForm.get('dateOfBirth')?.invalid &&
+    registerForm.get('dateOfBirth')?.touched
+  ) {
+
+    @if (registerForm.get('dateOfBirth')?.hasError('required')) {
+      <p class="text-red-500 text-xs">
+        Date of birth is required.
+      </p>
+    }
+
+  }
+
+
+  <!-- ================= Gender ================= -->
+
+  <div>
+
+    <label
+      class="text-sm font-semibold text-gray-800 mb-1.5 flex items-center gap-1"
+    >
+      Gender
+
+      <span
+        class="inline-flex items-center justify-center w-4 h-4
+        border border-gray-400 rounded-full text-[10px]
+        text-gray-600 cursor-pointer"
+        title="Select your gender"
+      >
+        ?
+      </span>
+    </label>
+
+    <div class="relative">
+
+      <select
+        formControlName="gender"
+
+        [class.border-red-500]="
+          registerForm.get('gender')?.invalid &&
+          registerForm.get('gender')?.touched
+        "
+
+        [class.border-gray-300]="
+          !(
+            registerForm.get('gender')?.invalid &&
+            registerForm.get('gender')?.touched
+          )
+        "
+
+        class="w-full px-4 py-3.5 border rounded-xl
+        text-sm bg-white appearance-none
+        focus:outline-none focus:border-gray-500
+        cursor-pointer text-gray-700 shadow-sm"
+      >
+
+        <option value="" disabled>
+          Select your gender
+        </option>
+
+        <option value="male">
+          Male
+        </option>
+
+        <option value="female">
+          Female
+        </option>
+
+      </select>
+
+      <div
+        class="pointer-events-none absolute inset-y-0 right-0
+        flex items-center px-3 text-gray-500"
+      >
+
+        <svg
+          class="w-4 h-4 fill-current"
+          viewBox="0 0 20 20"
+        >
+          <path
+            d="M5.293 7.293a1 1 0 011.414 0
+            L10 10.586l3.293-3.293a1 1
+            0 111.414 1.414l-4 4a1 1
+            0 01-1.414 0l-4-4a1 1
+            0 010-1.414z"
+          />
+        </svg>
+
+      </div>
+
+    </div>
+
+    @if (
+      registerForm.get('gender')?.invalid &&
+      registerForm.get('gender')?.touched
+    ) {
+
+      @if (registerForm.get('gender')?.hasError('required')) {
+        <p class="text-red-500 text-xs mt-1">
+          Please select your gender.
+        </p>
+      }
+
+    }
+
+  </div>
+
+
+  <!-- ================= Password ================= -->
+
+  <app-custom-input
+    label="Password"
+    type="password"
+    placeholder="Password"
+    formControlName="password"
+    [hasError]="!!(
+      registerForm.get('password')?.invalid &&
+      registerForm.get('password')?.touched
+    )"
+  >
+  </app-custom-input>
+
+  @if (
+    registerForm.get('password')?.invalid &&
+    registerForm.get('password')?.touched
+  ) {
+
+    @if (registerForm.get('password')?.hasError('required')) {
+      <p class="text-red-500 text-xs">
+        Password is required.
+      </p>
+    }
+
+    @if (registerForm.get('password')?.hasError('pattern')) {
+      <p class="text-red-500 text-xs">
+        Password must be at least 8 characters and include
+        uppercase, lowercase, number, and special character.
+      </p>
+    }
+
+  }
+
+
+  <!-- ================= Confirm Password ================= -->
+
+  <app-custom-input
+    label="Confirm Password"
+    type="password"
+    placeholder="Re-enter password"
+    formControlName="rePassword"
+    [hasError]="!!(
+      registerForm.get('rePassword')?.invalid &&
+      registerForm.get('rePassword')?.touched
+    )"
+  >
+  </app-custom-input>
+  
+  @if (
+  registerForm.get('rePassword')?.invalid &&
+  registerForm.get('rePassword')?.touched
+) {
+
+  @if (registerForm.get('rePassword')?.hasError('required')) {
+    <p class="text-red-500 text-xs">
+      Please confirm your password.
+    </p>
+  }
+
+  @if (registerForm.get('rePassword')?.hasError('mismatch')) {
+    <p class="text-red-500 text-xs">
+      Passwords do not match.
+    </p>
+  }
+
+}
+
+
+  <!-- ================= Policy Info ================= -->
+
+  <div
+    class="text-[11px] text-gray-500 leading-normal
+    pt-2 space-y-2"
+  >
+
+    <p>
+      People who use our service may have uploaded your
+      contact information.
+
+      <a
+        href="#"
+        class="text-blue-600 font-medium hover:underline"
+      >
+        Learn more
+      </a>.
+    </p>
+
+    <p>
+      By tapping Submit, you agree to create an account and
+      to our
+
+      <a
+        href="#"
+        class="text-blue-600 font-medium hover:underline"
+      >
+        Terms
+      </a>,
+
+      <a
+        href="#"
+        class="text-blue-600 font-medium hover:underline"
+      >
+        Privacy Policy
+      </a>
+
+      and
+
+      <a
+        href="#"
+        class="text-blue-600 font-medium hover:underline"
+      >
+        Cookies Policy
+      </a>.
+    </p>
+
+  </div>
+
+
+  <!-- ================= Submit Button ================= -->
+
+ <button
+  type="submit"
+  [disabled]="isLoading"
+  class="w-full bg-blue-600 cursor-pointer hover:bg-blue-700 disabled:bg-blue-400
+  text-white font-semibold py-3 rounded-xl text-sm
+  transition duration-150 mt-4 shadow-sm
+  flex items-center justify-center gap-2"
+>
+  @if (isLoading) {
+    Creating account
+    <span class="ml-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  } @else {
+    Create an account
+  }
+</button>
+
+    <button
+    routerLink="/login"
+  type="submit"
+  [disabled]="isLoading"
+  class="w-full bg-gray-100 cursor-pointer hover:bg-gray-200 disabled:bg-gray-400
+  text-gray-900 font-semibold py-3 rounded-xl text-sm
+  transition duration-150 mt-4 shadow-sm
+  flex items-center justify-center gap-2"
+>
+  I already have an account
+</button>
+</form>
+  </div>
+</div>

@@ -1,0 +1,144 @@
+<main class="min-h-[calc(100vh-4rem)] bg-[#f3f6f8] px-3 py-6 sm:px-6 sm:py-9">
+	<div class="mx-auto max-w-4xl">
+		@if (isLoading) {
+			<section class="rounded-2xl border border-slate-200 bg-white px-5 py-14 text-center text-sm text-slate-500" role="status">
+				<i class="fa-solid fa-circle-notch mb-3 block text-xl text-blue-700" aria-hidden="true"></i>
+				Loading your profile...
+			</section>
+		} @else if (hasError || !profile) {
+			<section class="rounded-2xl border border-slate-200 bg-white px-5 py-14 text-center">
+				<i class="fa-solid fa-triangle-exclamation mb-3 block text-xl text-rose-600" aria-hidden="true"></i>
+				<p class="font-semibold text-slate-900">We couldn't load your profile.</p>
+				<button type="button" (click)="loadProfile()" class="mt-4 rounded-lg bg-blue-700 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-800">
+					Try again
+				</button>
+			</section>
+		} @else {
+			<section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm" aria-label="Your profile">
+				<div class="profile-cover relative h-36 sm:h-52">
+					@if (profile.cover) {
+						<img [src]="profile.cover" [alt]="displayName + ' cover photo'" class="absolute inset-0 h-full w-full object-cover" />
+					}
+					<span class="absolute bottom-4 left-5 rounded-full border border-white/30 bg-slate-950/20 px-3 py-1 text-xs font-semibold tracking-wide text-white backdrop-blur-sm sm:left-8">PROFILE</span>
+				</div>
+
+				<div class="px-5 pb-6 sm:px-8">
+					<div class="relative z-10 -mt-12 flex flex-col gap-4 sm:-mt-14 sm:flex-row sm:items-end sm:justify-between">
+						<div class="flex min-w-0 items-end gap-4">
+							@if (profilePhoto) {
+								<img [src]="profilePhoto" [alt]="displayName" class="h-24 w-24 shrink-0 rounded-full border-4 border-white bg-white object-cover shadow-md sm:h-28 sm:w-28" />
+							} @else {
+								<span class="flex h-24 w-24 shrink-0 items-center justify-center rounded-full border-4 border-white bg-blue-100 text-2xl font-bold text-blue-800 shadow-md sm:h-28 sm:w-28 sm:text-3xl">{{ initials }}</span>
+							}
+							<div class="min-w-0 translate-y-1">
+								<h1 class="truncate text-2xl font-bold text-slate-900 sm:text-3xl">{{ displayName }}</h1>
+								@if (profile.username) {
+									<p class="mt-1 truncate text-sm text-slate-500">&#64;{{ profile.username }}</p>
+								}
+							</div>
+						</div>
+
+						<label class="inline-flex w-fit cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-blue-200 hover:bg-blue-50 hover:text-blue-800">
+							<input type="file" accept="image/*" class="sr-only" [disabled]="isUploadingPhoto" (change)="uploadPhoto($event)" />
+							<i class="fa-solid fa-camera" aria-hidden="true"></i>
+							<span>{{ isUploadingPhoto ? 'Uploading...' : 'Update photo' }}</span>
+						</label>
+					</div>
+
+					@if (photoUploadError) {
+						<p class="mt-3 text-sm text-rose-600" role="alert">{{ photoUploadError }}</p>
+					}
+
+					<div class="mt-6 grid grid-cols-2 divide-x divide-slate-200 border-t border-slate-100 pt-5 sm:grid-cols-4">
+						<div class="px-3 first:pl-0">
+							<p class="text-xl font-bold text-slate-900">{{ posts.length }}</p>
+							<p class="mt-0.5 text-xs font-medium uppercase tracking-wide text-slate-500">Posts</p>
+						</div>
+						<div class="px-3">
+							<p class="text-xl font-bold text-slate-900">{{ followerCount }}</p>
+							<p class="mt-0.5 text-xs font-medium uppercase tracking-wide text-slate-500">Followers</p>
+						</div>
+						<div class="px-3">
+							<p class="text-xl font-bold text-slate-900">{{ followingCount }}</p>
+							<p class="mt-0.5 text-xs font-medium uppercase tracking-wide text-slate-500">Following</p>
+						</div>
+						<div class="px-3">
+							<p class="text-xl font-bold text-slate-900">{{ bookmarkCount }}</p>
+							<p class="mt-0.5 text-xs font-medium uppercase tracking-wide text-slate-500">Saved</p>
+						</div>
+					</div>
+
+					@if (profile.bio || profile.email || birthDate || genderLabel || joinedDate) {
+						<div class="mt-5 border-t border-slate-100 pt-5">
+							@if (profile.bio) {
+								<p class="max-w-2xl whitespace-pre-line text-sm leading-6 text-slate-700">{{ profile.bio }}</p>
+							}
+							<div class="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm text-slate-500">
+								@if (profile.email) {
+									<span class="inline-flex items-center gap-2 break-all">
+										<i class="fa-regular fa-envelope text-slate-400" aria-hidden="true"></i>
+										{{ profile.email }}
+									</span>
+								}
+								@if (birthDate) {
+									<span class="inline-flex items-center gap-2">
+										<i class="fa-regular fa-calendar text-slate-400" aria-hidden="true"></i>
+										{{ birthDate }}
+									</span>
+								}
+								@if (genderLabel) {
+									<span class="inline-flex items-center gap-2">
+										<i class="fa-regular fa-user text-slate-400" aria-hidden="true"></i>
+										{{ genderLabel }}
+									</span>
+								}
+								@if (joinedDate) {
+									<span class="inline-flex items-center gap-2">
+										<i class="fa-regular fa-clock text-slate-400" aria-hidden="true"></i>
+										Joined {{ joinedDate }}
+									</span>
+								}
+							</div>
+						</div>
+					}
+				</div>
+			</section>
+
+			<section class="mt-8" aria-labelledby="profile-posts-heading">
+				<div class="mb-4 flex items-center justify-between">
+					<h2 id="profile-posts-heading" class="text-lg font-bold text-slate-900">Your posts</h2>
+					<span class="text-sm text-slate-500">{{ posts.length }}</span>
+				</div>
+
+				@if (isLoadingPosts) {
+					<div class="rounded-xl border border-slate-200 bg-white px-5 py-10 text-center text-sm text-slate-500" role="status">
+						<i class="fa-solid fa-circle-notch mb-3 block text-xl text-blue-700" aria-hidden="true"></i>
+						Loading your posts...
+					</div>
+				} @else if (postsError) {
+					<div class="rounded-xl border border-rose-200 bg-white px-5 py-10 text-center">
+						<p class="text-sm text-slate-700">Couldn't load your posts.</p>
+						<button type="button" (click)="loadPosts()" class="mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900">Try again</button>
+					</div>
+				} @else if (posts.length === 0) {
+					<div class="rounded-xl border border-slate-200 bg-white px-5 py-12 text-center">
+						<span class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-50 text-blue-700">
+							<i class="fa-regular fa-pen-to-square" aria-hidden="true"></i>
+						</span>
+						<p class="mt-4 font-semibold text-slate-900">No posts yet</p>
+						<p class="mt-1 text-sm text-slate-500">Posts you share will appear here.</p>
+						<a routerLink="/feed" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-blue-700 hover:text-blue-900">
+							Go to feed <i class="fa-solid fa-arrow-right text-xs" aria-hidden="true"></i>
+						</a>
+					</div>
+				} @else {
+					<div class="flex flex-col gap-4">
+						@for (post of posts; track post._id || post.id) {
+							<app-post-card [post]="post" (postChanged)="loadPosts()" />
+						}
+					</div>
+				}
+			</section>
+		}
+	</div>
+</main>

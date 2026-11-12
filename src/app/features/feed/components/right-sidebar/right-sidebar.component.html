@@ -1,0 +1,48 @@
+<aside class="hidden lg:block">
+  <div [class.sticky]="sticky()" [class.top-24]="sticky()">
+    <section class="overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm" aria-labelledby="suggestions-heading">
+      <header class="flex items-center justify-between border-b border-gray-100 px-4 py-4">
+        <div>
+          <h3 id="suggestions-heading" class="text-sm font-semibold text-gray-900">People to follow</h3>
+          <p class="mt-1 text-xs text-gray-500">Suggestions for you</p>
+        </div>
+        <span class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-50 text-blue-700" aria-hidden="true">
+          <i class="fa-solid fa-user-plus text-sm"></i>
+        </span>
+      </header>
+
+      @if (isLoading) {
+        <p class="px-4 py-8 text-center text-sm text-gray-500" role="status">Loading suggestions...</p>
+      } @else if (hasError) {
+        <div class="px-4 py-7 text-center">
+          <p class="text-sm text-gray-600">Couldn't load suggestions.</p>
+          <button type="button" (click)="loadSuggestions()" class="mt-2 text-sm font-semibold text-blue-700 hover:text-blue-900">
+            Try again
+          </button>
+        </div>
+      } @else if (suggestions.length === 0) {
+        <p class="px-4 py-8 text-center text-sm text-gray-500">No suggestions right now.</p>
+      } @else {
+        <ul class="divide-y divide-gray-100 px-4">
+          @for (suggestion of suggestions; track suggestion._id) {
+            <li class="flex items-center gap-3 py-3">
+              @if (suggestion.photo) {
+                <img [src]="suggestion.photo" [alt]="suggestion.name || suggestion.username || 'Suggested user'" class="h-11 w-11 shrink-0 rounded-full border border-gray-100 object-cover" />
+              } @else {
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-blue-50 text-blue-700">
+                  <i class="fa-solid fa-user" aria-hidden="true"></i>
+                </span>
+              }
+              <div class="min-w-0 flex-1">
+                <p class="truncate text-sm font-semibold text-gray-900">{{ suggestion.name || suggestion.username || 'SocialApp member' }}</p>
+                @if (suggestion.username) {
+                  <p class="mt-0.5 truncate text-xs text-gray-500">&#64;{{ suggestion.username }}</p>
+                }
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  </div>
+</aside>

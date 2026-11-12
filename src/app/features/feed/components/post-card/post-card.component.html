@@ -1,0 +1,252 @@
+<div
+  role="link"
+  tabindex="0"
+  (click)="openPost($event)"
+  (keydown.enter)="openPost($event)"
+  class="bg-white cursor-pointer rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+>
+
+  <!-- Post Header -->
+  <div class="flex items-center  justify-between p-4">
+
+    <div class="flex items-center gap-3">
+
+      <!-- Avatar -->
+      <img
+        [src]="post().user.photo"
+        [alt]="post().user.name"
+        class="w-11 h-11 rounded-full object-cover shrink-0"
+      />
+
+      <!-- User Info -->
+      <div>
+        <h3 class="text-sm font-semibold text-gray-800">
+          {{ post().user.name }}
+        </h3>
+
+        <div class="flex items-center gap-1 text-xs text-gray-400">
+          <span>
+            {{ post().createdAt | date:'medium' }}
+          </span>
+
+          <span>•</span>
+
+          @if (post().privacy === 'public') {
+            <i class="fa-solid fa-earth-americas text-[10px]"></i>
+          } @else {
+            <i class="fa-solid fa-lock text-[10px]"></i>
+          }
+        </div>
+      </div>
+
+    </div>
+
+    <!-- More Menu -->
+<div class="relative">
+
+  <button
+    type="button"
+    (click)="toggleMenu()"
+    class="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:bg-gray-100 transition"
+  >
+    <i class="fa-solid fa-ellipsis"></i>
+  </button>
+
+  @if (isMenuOpen()) {
+  <div
+    class="absolute right-0 top-11 z-50 w-40 bg-white rounded-xl shadow-lg border border-gray-100 py-1"
+  >
+
+    <!-- Save -->
+    <button
+      type="button"
+      class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+    >
+      <i class="fa-regular fa-bookmark w-4"></i>
+      <span>Save</span>
+    </button>
+
+    @if (post().user._id === userId) {
+
+      <!-- Edit -->
+      <button
+        type="button"
+        (click)="startEditing()"
+        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition"
+      >
+        <i class="fa-solid fa-pen w-4"></i>
+        <span>Edit</span>
+      </button>
+
+      <!-- Delete -->
+      <button
+        type="button"
+        (click)="showDeleteDialog = true"
+        class="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-500 hover:bg-red-50 transition"
+      >
+        <i class="fa-regular fa-trash-can w-4"></i>
+      @if (showDeleteDialog) {
+        <app-confirm-dialog
+          title="Delete post?"
+          message="This post will be permanently deleted."
+          confirmLabel="Delete"
+          (confirmed)="deletePost()"
+          (cancelled)="showDeleteDialog = false"
+        ></app-confirm-dialog>
+      }
+
+        <span>Delete</span>
+      </button>
+
+    }
+
+  </div>
+}
+</div>
+
+
+
+  </div>
+
+  @if (isEditing()) {
+    <form (submit)="saveChanges($event)" class="px-4 pb-4 space-y-3">
+      <textarea
+        [formControl]="editBody"
+        rows="4"
+        aria-label="Edit post text"
+        class="w-full resize-y rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-400"
+      ></textarea>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-3">
+          <select
+            [formControl]="editPrivacy"
+            aria-label="Post privacy"
+            class="rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700"
+          >
+            <option value="public">Public</option>
+            <option value="following">Followers</option>
+            <option value="only_me">Only Me</option>
+          </select>
+          <label class="cursor-pointer text-sm text-gray-600 hover:text-gray-900">
+            <i class="fa-regular fa-image mr-1"></i>
+            Change photo
+            <input type="file" accept="image/*" class="hidden" (change)="selectEditImage($event)" />
+          </label>
+        </div>
+        <div class="flex items-center gap-2">
+          <button type="button" (click)="cancelEditing()" class="rounded-lg px-3 py-2 text-sm text-gray-600 hover:bg-gray-100">
+            Cancel
+          </button>
+          <button type="submit" class="rounded-lg bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700">
+            Save changes
+          </button>
+        </div>
+      </div>
+    </form>
+  } @else {
+    <!-- Post Content -->
+    @if (post().body) {
+      <div class="px-4 pb-4">
+        <p class="text-sm text-gray-700 leading-6 whitespace-pre-line">
+          {{ post().body }}
+        </p>
+      </div>
+    }
+
+    <!-- Post Image -->
+    @if (post().image) {
+      <div class="w-full bg-gray-100">
+        <img
+          [src]="post().image"
+          [alt]="post().body"
+          class="w-full max-h-[500px] object-cover"
+        />
+      </div>
+    }
+  }
+
+  <!-- Engagement -->
+  <div class="px-4 py-3">
+
+    <div class="flex items-center justify-between text-xs text-gray-500">
+
+      <div class="flex items-center gap-1">
+        <span class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+          <i class="fa-solid fa-heart text-[10px] text-gray-500"></i>
+        </span>
+
+        <span>
+          {{ post().likesCount }} Likes
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <span>
+          {{ post().commentsCount }} Comments
+        </span>
+
+        <span>
+          {{ post().sharesCount }} Shares
+        </span>
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-gray-100"></div>
+
+  <!-- Post Actions -->
+  <div class="flex items-center px-2 py-2">
+
+    <!-- Like -->
+    <button
+      type="button"
+      class="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition"
+    >
+      <i class="fa-regular fa-heart text-lg"></i>
+      <span class="text-sm font-medium">
+        Like
+      </span>
+    </button>
+
+    <!-- Comment -->
+    <button
+      #commentButton
+      type="button"
+      class="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition"
+    >
+      <i class="fa-regular fa-comment text-lg"></i>
+      <span class="text-sm font-medium">
+        Comment
+      </span>
+    </button>
+
+    <!-- Share -->
+    <button
+      type="button"
+      class="flex-1 flex items-center justify-center gap-2 py-2 rounded-xl text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition"
+    >
+      <i class="fa-solid fa-share text-lg"></i>
+      <span class="text-sm font-medium">
+        Share
+      </span>
+    </button>
+
+  </div>
+
+  @defer (on interaction(commentButton)) {
+    <app-comment-list
+      [postId]="post()._id"
+      (commentsChanged)="postChanged.emit()"
+    ></app-comment-list>
+  } @placeholder {
+    @if (post().commentsCount > 0) {
+      <p class="border-t border-gray-100 px-4 py-3 text-sm text-gray-500">
+        Click the Comment button to load comments.
+      </p>
+    }
+  }
+
+</div>

@@ -1,0 +1,194 @@
+<nav class="app-navbar w-full h-16 sticky top-0 z-50">
+  <div class="navbar-content max-w-8xl mx-auto h-full px-4 grid items-center">
+
+    <!-- Left: Logo + Search -->
+    <div class="flex items-center gap-4">
+      <!-- Logo -->
+      <div class="flex items-center gap-1.5 text-blue-600 font-bold text-lg">
+        <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+        </svg>
+        <span class="text-gray-900 font-bold tracking-tight text-base">SocialApp</span>
+      </div>
+
+      <!-- Search -->
+      <label class="navbar-search hidden lg:flex items-center h-10">
+        <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+        <input
+          type="search"
+          aria-label="Search"
+          placeholder="Search"
+          class="w-full text-sm text-gray-700 placeholder-gray-500"
+        />
+      </label>
+    </div>
+
+    <!-- Center: Navigation -->
+    <div class="navbar-links flex items-center h-full gap-0.5 sm:gap-1">
+      <!-- Home -->
+      <a
+        routerLink="/feed"
+        routerLinkActive="navbar-link-active"
+        [routerLinkActiveOptions]="{ exact: true }"
+        class="navbar-link h-11 flex items-center justify-center text-gray-500 rounded-lg transition"
+        aria-label="Feed"
+      >
+        <i class="fa-solid fa-house"></i>
+        <span class="hidden lg:inline">Feed</span>
+      </a>
+
+      <!-- Profile -->
+      <a
+        routerLink="/profile"
+        routerLinkActive="navbar-link-active"
+        class="navbar-link h-11 flex items-center justify-center text-gray-500 rounded-lg transition"
+        aria-label="Profile"
+      >
+        <i class="fa-regular fa-user"></i>
+        <span class="hidden lg:inline">Profile</span>
+      </a>
+
+      <!-- Notifications -->
+      <div class="relative">
+        <button
+          type="button"
+          (click)="toggleNotifications()"
+          [attr.aria-expanded]="isNotificationsOpen"
+          aria-label="Notifications"
+          [class.navbar-link-active]="isNotificationsOpen"
+          class="navbar-link relative h-11 flex items-center justify-center text-gray-500 rounded-lg transition"
+        >
+          <i class="fa-regular fa-bell"></i>
+          <span class="hidden lg:inline">Alerts</span>
+          @if (notificationsService.unreadCount() > 0) {
+            <span class="absolute top-1 right-7 min-w-5 h-5 px-1 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+              {{ notificationsService.unreadCount() > 99 ? '99+' : notificationsService.unreadCount() }}
+            </span>
+          }
+        </button>
+        @if (isNotificationsOpen) {
+          <section
+            class="notification-popover absolute left-1/2 top-14 z-60 w-[min(24rem,calc(100vw-2rem))] -translate-x-1/2 overflow-hidden rounded-xl border border-gray-100 bg-white text-left shadow-xl"
+            aria-label="Recent notifications"
+          >
+            <header class="flex items-center justify-between border-b border-gray-100 px-4 py-3">
+              <h2 class="font-semibold text-gray-900">Notifications</h2>
+              @if (notificationsService.unreadCount() > 0) {
+                <span class="text-xs font-medium text-blue-600">
+                  {{ notificationsService.unreadCount() }} unread
+                </span>
+              }
+            </header>
+
+            @if (isLoadingNotificationPreview) {
+              <p class="px-4 py-8 text-center text-sm text-gray-500" role="status">Loading notifications...</p>
+            } @else if (notificationPreviewFailed) {
+              <div class="px-4 py-6 text-center">
+                <p class="text-sm text-gray-600">Couldn't load notifications.</p>
+                <button
+                  type="button"
+                  (click)="loadNotificationPreview()"
+                  class="mt-2 text-sm font-semibold text-blue-600"
+                >
+                  Try again
+                </button>
+              </div>
+            } @else if (notificationPreview.length === 0) {
+              <p class="px-4 py-8 text-center text-sm text-gray-500">No notifications yet.</p>
+            } @else {
+              <ul class="max-h-96 overflow-y-auto">
+                @for (notification of notificationPreview; track notification._id) {
+                  <li class="flex items-start gap-3 border-b border-gray-100 px-4 py-3 last:border-b-0">
+                    @if (notification.sender?.photo || notification.user?.photo) {
+                      <img
+                        [src]="notification.sender?.photo ?? notification.user?.photo"
+                        [alt]="notification.sender?.name ?? notification.user?.name ?? 'User'"
+                        class="h-10 w-10 shrink-0 rounded-full object-cover"
+                      />
+                    } @else {
+                      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-500">
+                        <i class="fa-solid fa-bell" aria-hidden="true"></i>
+                      </span>
+                    }
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm text-gray-800">{{ notificationMessage(notification) }}</p>
+                      @if (notification.createdAt) {
+                        <time class="mt-1 block text-xs text-gray-500" [attr.datetime]="notification.createdAt">
+                          {{ notification.createdAt | date:'short' }}
+                        </time>
+                      }
+                    </div>
+                    @if (!(notification.isRead ?? notification.read ?? false)) {
+                      <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-blue-600" aria-label="Unread"></span>
+                    }
+                  </li>
+                }
+              </ul>
+            }
+
+            <a
+              routerLink="/notifications"
+              (click)="isNotificationsOpen = false"
+              class="block border-t border-gray-100 px-4 py-3 text-center text-sm font-semibold text-blue-600 hover:bg-gray-50"
+            >
+              See all
+            </a>
+          </section>
+        }
+      </div>
+    </div>
+
+    <!-- Right Section -->
+    <div class="navbar-actions flex items-center">
+      <!-- Profile -->
+      <div class="relative">
+        <button
+          type="button"
+          (click)="toggleProfileMenu()"
+          class="navbar-account-button w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center transition focus:outline-none"
+        >
+          <i class="fa-solid fa-user text-gray-700"></i>
+        </button>
+
+        <!-- Dropdown -->
+        @if (isProfileMenuOpen) {
+          <div class="navbar-account-menu absolute right-0 top-12 w-56 bg-white rounded-xl border border-gray-100 py-2 z-50">
+
+            <!-- Profile -->
+            <a
+              routerLink="/profile"
+              (click)="isProfileMenuOpen = false"
+              class="flex items-center gap-3 px-3 py-2 hover:bg-gray-50 transition"
+            >
+              <div class="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                <i class="fa-solid fa-user text-gray-600"></i>
+              </div>
+
+              <div>
+                <p class="text-sm font-semibold text-gray-800">My Profile</p>
+                <p class="text-xs text-gray-500">View your profile</p>
+              </div>
+            </a>
+
+            <!-- Divider -->
+            <div class="border-t border-gray-100 my-1"></div>
+
+            <!-- Logout -->
+            <button
+              type="button"
+              (click)="logout()"
+              class="w-full flex items-center gap-3 px-3 py-2 cursor-pointer hover:bg-red-50 transition text-left"
+            >
+              <div class="w-10 h-10 rounded-full bg-red-50 flex items-center justify-center">
+                <i class="fa-solid fa-right-from-bracket text-red-500"></i>
+              </div>
+
+              <span class="text-sm font-medium text-red-500">Log out</span>
+            </button>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</nav>

@@ -1,0 +1,92 @@
+<div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+  <form (submit)="onSubmit($event)">
+    <div class="p-4 pb-2">
+      <div class="flex items-start gap-3">
+        <div class="w-11 h-11 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+          <i class="fa-solid fa-user text-gray-500"></i>
+        </div>
+
+        <div class="flex-1">
+          <h3 class="text-sm font-semibold text-gray-800 mb-1">
+            Mariam Abdelrazek
+          </h3>
+
+          <select
+            name="privacy"
+            [formControl]="privacy"
+            class="text-xs font-medium text-gray-500 bg-gray-50 border border-gray-100 rounded-lg  py-1 outline-none hover:bg-gray-100 focus:border-gray-200 cursor-pointer transition "
+          >
+            <option value="public">🌎 Public</option>
+            <option value="following">👥 Followers</option>
+            <option value="only_me">🔒 Only Me</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="px-4 pb-4">
+      <textarea
+      [formControl]="content"
+        name="body"
+        rows="4"
+        placeholder="What's on your mind, Mariam?"
+        class="w-full resize-none bg-gray-50 rounded-xl px-4 py-3 text-sm text-gray-700 placeholder:text-gray-400 outline-none border border-transparent focus:border-gray-200 focus:bg-white transition"
+      ></textarea>
+
+      @if (imgUrl) {
+        <div class="relative mt-3">
+          <img
+            [src]="imgUrl"
+            alt="Selected image"
+            class="w-full max-h-80 object-cover rounded-xl border border-gray-100"
+          />
+
+          <button
+            type="button"
+            (click)="removeImage()"
+            class="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition"
+            aria-label="Remove image"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      }
+    </div>
+
+    <div class="border-t border-gray-100"></div>
+
+    <div class="flex items-center justify-between px-4 py-3">
+      <div class="flex items-center gap-1">
+        <label
+          class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition cursor-pointer"
+        >
+          <i class="fa-regular fa-image"></i>
+          <span class="text-sm">Photo</span>
+
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            class="hidden"
+            (change)="changeImage($event)"
+          />
+        </label>
+
+        <button
+          type="button"
+          class="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-500 hover:bg-gray-50 hover:text-gray-800 transition"
+        >
+          <i class="fa-regular fa-face-smile"></i>
+          <span class="text-sm">Feeling</span>
+        </button>
+      </div>
+
+      <button
+        type="submit"
+        class="px-6 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700 transition"
+      >
+        Post
+      </button>
+    </div>
+  </form>
+</div>

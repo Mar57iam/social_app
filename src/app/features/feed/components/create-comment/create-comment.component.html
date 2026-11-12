@@ -1,0 +1,47 @@
+<form (submit)="submitComment($event)" class="py-3">
+  @if (imagePreview) {
+    <div class="relative mb-3 w-fit">
+      <img [src]="imagePreview" alt="Comment image preview" class="max-h-48 rounded-lg object-cover" />
+      <button
+        type="button"
+        (click)="removeImage()"
+        aria-label="Remove image"
+        class="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+      >
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+  }
+
+  <div class="flex items-center gap-3">
+  <div class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+    <i class="fa-solid fa-user text-gray-500 text-sm"></i>
+  </div>
+
+  <div class="flex-1 flex items-center gap-2">
+    <input
+      type="text"
+      [formControl]="content"
+      placeholder="Write a comment..."
+      class="flex-1 bg-gray-50 border border-gray-100 rounded-full px-4 py-2.5 text-sm text-gray-700 placeholder:text-gray-400 outline-none focus:bg-white focus:border-gray-200 transition"
+    />
+
+    <label class="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100" aria-label="Add image">
+      <i class="fa-regular fa-image"></i>
+      <input type="file" accept="image/*" class="hidden" (change)="selectImage($event)" />
+    </label>
+
+    <button
+      type="submit"
+      [disabled]="isSubmitting || (!content.value.trim() && !selectedImage)"
+      class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50 transition"
+      aria-label="Send comment"
+    >
+      <i class="fa-solid fa-paper-plane text-sm"></i>
+    </button>
+  </div>
+</div>
+  @if (errorMessage) {
+    <p class="mt-2 pl-12 text-sm text-red-600" role="alert">{{ errorMessage }}</p>
+  }
+</form>

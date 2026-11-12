@@ -1,0 +1,101 @@
+<div class="flex gap-3 py-3">
+  @if (comment.commentCreator.photo) {
+    <img
+      [src]="comment.commentCreator.photo"
+      [alt]="comment.commentCreator.name"
+      class="w-9 h-9 rounded-full object-cover shrink-0"
+    />
+  } @else {
+    <div class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+      <i class="fa-solid fa-user text-gray-500 text-sm"></i>
+    </div>
+  }
+
+  <div class="flex-1">
+    <div class="bg-gray-50 rounded-2xl px-4 py-2.5">
+      <h4 class="text-sm font-semibold text-gray-800">
+        {{ comment.commentCreator.name }}
+      </h4>
+
+      @if (isEditing) {
+        <form (submit)="saveEdit($event)" class="mt-2 space-y-2">
+          <textarea
+            [formControl]="editContent"
+            rows="2"
+            aria-label="Edit comment"
+            class="w-full resize-y rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm text-gray-700 outline-none focus:border-blue-400"
+          ></textarea>
+          @if (editImagePreview || comment.image) {
+            <div class="relative w-fit">
+              <img
+                [src]="editImagePreview || comment.image"
+                alt="Comment image preview"
+                class="max-h-48 rounded-lg object-cover"
+              />
+              @if (editImagePreview) {
+                <button
+                  type="button"
+                  (click)="clearEditImage()"
+                  aria-label="Undo image change"
+                  class="absolute right-1 top-1 flex h-7 w-7 items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80"
+                >
+                  <i class="fa-solid fa-xmark"></i>
+                </button>
+              }
+            </div>
+          }
+          <label class="inline-flex cursor-pointer items-center gap-2 text-xs font-medium text-gray-600 hover:text-blue-600">
+            <i class="fa-regular fa-image"></i>
+            Change image
+            <input type="file" accept="image/*" class="hidden" (change)="selectEditImage($event)" />
+          </label>
+          <div class="flex justify-end gap-2">
+            <button type="button" (click)="cancelEditing()" class="rounded-md px-3 py-1.5 text-xs text-gray-600 hover:bg-gray-100">
+              Cancel
+            </button>
+            <button type="submit" [disabled]="isSaving" class="rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700 disabled:opacity-50">
+              Save
+            </button>
+          </div>
+        </form>
+      } @else {
+        <p class="text-sm text-gray-700 mt-1">
+          {{ comment.content }}
+        </p>
+      }
+
+      @if (!isEditing && comment.image) {
+        <img [src]="comment.image" alt="Comment attachment" class="mt-2 max-h-60 rounded-lg object-cover" />
+      }
+    </div>
+
+    <div class="flex items-center gap-4 px-2 mt-1">
+      <span class="text-xs text-gray-400">
+        {{ comment.createdAt | date: 'short' }}
+      </span>
+
+      @if (isOwner) {
+        <button type="button" (click)="startEditing()" class="text-xs font-medium text-gray-500 hover:text-blue-600 transition">
+          Edit
+        </button>
+        <button type="button" (click)="showDeleteDialog = true" class="text-xs font-medium text-red-500 hover:text-red-700 transition">
+          Delete
+        </button>
+      }
+    </div>
+
+    @if (errorMessage) {
+      <p class="mt-1 px-2 text-xs text-red-600" role="alert">{{ errorMessage }}</p>
+    }
+  </div>
+</div>
+
+@if (showDeleteDialog) {
+  <app-confirm-dialog
+    title="Delete comment?"
+    message="This comment will be permanently deleted."
+    confirmLabel="Delete"
+    (confirmed)="deleteComment()"
+    (cancelled)="showDeleteDialog = false"
+  ></app-confirm-dialog>
+}

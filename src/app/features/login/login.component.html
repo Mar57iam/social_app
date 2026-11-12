@@ -1,0 +1,152 @@
+<div class="min-h-screen bg-white flex flex-col justify-between font-sans">
+
+  <!-- Main Content Container -->
+  <div class="flex-1 grid grid-cols-1 lg:grid-cols-2 items-center max-w-7xl mx-auto w-full px-6 py-8">
+
+    <!-- Left Section -->
+    <div class="flex flex-col justify-between h-full max-w-2xl mx-auto lg:mx-0 w-full lg:pr-12 lg:border-r lg:border-gray-200">
+
+      <!-- 1. App Logo (Top Left) -->
+      <div class="text-[#0064e0] mb-6 lg:mb-8">
+        <svg class="w-12 h-12 fill-current" viewBox="0 0 24 24">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/>
+        </svg>
+      </div>
+
+      <!-- 2. Main Layout Container -->
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-4 items-start my-auto">
+
+        <!-- Headline -->
+        <div class="sm:col-span-4 pt-8 sm:pt-16">
+          <h1 class="text-4xl sm:text-5xl lg:text-[52px] font-extrabold text-gray-900 leading-[1.08] tracking-tight">
+            Explore <br />
+            the <br />
+            things <br />
+            <span class="text-[#0064e0]">you love.</span>
+          </h1>
+        </div>
+
+        <!-- Image Graphics -->
+        <div class="sm:col-span-8 relative w-full -mt-6 sm:-mt-12">
+          <img
+            src="/login.PNG"
+            alt="Explore the things you love"
+            class="w-full h-auto object-contain transform scale-105 sm:scale-110 origin-top-left"
+          />
+        </div>
+
+      </div>
+
+      <!-- Spacer -->
+      <div class="hidden lg:block h-8"></div>
+
+    </div>
+
+    <!-- Right Section: -->
+    <div class="flex flex-col justify-center max-w-md mx-auto w-full lg:pl-12 space-y-6 pt-8 lg:pt-0">
+
+      <h2 class="text-2xl font-bold text-gray-900 mb-2">
+        Log in to SocialApp
+      </h2>
+
+      <form class="space-y-4"   [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()">
+
+        <!-- Email -->
+ <app-custom-input
+    label="Email address"
+    type="email"
+    placeholder="Email address"
+    formControlName="email"
+    [hasError]="!!(
+      loginForm.get('email')?.invalid &&
+      loginForm.get('email')?.touched
+    )"
+  >
+  </app-custom-input>
+
+  @if (
+    loginForm.get('email')?.invalid &&
+    loginForm.get('email')?.touched
+  ) {
+
+    @if (loginForm.get('email')?.hasError('required')) {
+      <p class="text-red-500 text-xs">
+        Email is required.
+      </p>
+    }
+
+    @if (loginForm.get('email')?.hasError('email')) {
+      <p class="text-red-500 text-xs">
+        Please enter a valid email address.
+      </p>
+    }
+
+  }
+
+    <!-- Password Input -->
+    <app-custom-input
+    label="Password"
+    type="password"
+    placeholder="Password"
+    formControlName="password"
+    [hasError]="!!(
+      loginForm.get('password')?.invalid &&
+      loginForm.get('password')?.touched
+    )"
+  >
+  </app-custom-input>
+
+  @if (
+    loginForm.get('password')?.invalid &&
+    loginForm.get('password')?.touched
+  ) {
+
+    @if (loginForm.get('password')?.hasError('required')) {
+      <p class="text-red-500 text-xs">
+        Password is required.
+      </p>
+    }
+  }
+
+  <!-- Log In Button -->
+  <button
+  type="submit"
+  [disabled]="isLoading"
+  class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400
+  text-white font-semibold py-3 rounded-xl text-sm
+  transition duration-150 mt-4 shadow-sm
+  flex items-center justify-center gap-2"
+>
+  @if (isLoading) {
+    Login
+    <span class="ml-2 w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
+  } @else {
+    Login
+  }
+</button>
+
+       
+
+        <!-- Divider / Spacing -->
+        <div class="pt-6 pb-2">
+          <!-- Create New Account Button -->
+          <button
+            routerLink="/register"
+            type="button"
+            class="w-full border border-gray-300 hover:bg-gray-50 text-blue-600 font-semibold py-3.5 rounded-full text-base transition duration-150">
+            Create new account
+          </button>
+        </div>
+
+        <!-- Footer Logo/Meta Info -->
+        <div class="text-center text-xs font-semibold text-gray-500 pt-4 flex items-center justify-center gap-1">
+          <span class="text-blue-600 font-bold">∞</span> SocialApp
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+
+</div>

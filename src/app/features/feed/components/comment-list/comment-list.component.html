@@ -1,0 +1,33 @@
+<div class="px-4 border-t border-gray-100">
+  <div class="flex items-center justify-between py-3">
+    <h3 class="text-sm font-semibold text-gray-800">
+      Comments
+    </h3>
+
+    @if (comments.length > 2) {
+      <button
+        type="button"
+        (click)="toggleComments()"
+        class="text-xs cursor-pointer text-blue-600 font-medium hover:text-blue-700"
+      >
+        {{ showAllComments ? 'Show less' : 'View all' }}
+      </button>
+    }
+  </div>
+
+  <div>
+    @for (comment of visibleComments; track comment._id) {
+      <app-comment-item
+        [comment]="comment"
+        (commentChanged)="onCommentChanged()"
+      ></app-comment-item>
+    } @empty {
+      <p class="py-3 text-sm text-gray-500">No comments yet.</p>
+    }
+  </div>
+
+  <app-create-comment
+    [postId]="postId"
+    (commentCreated)="onCommentCreated()"
+  ></app-create-comment>
+</div>

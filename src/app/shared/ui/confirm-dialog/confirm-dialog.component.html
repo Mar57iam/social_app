@@ -1,0 +1,53 @@
+<div
+  class="fixed inset-0 z-100 flex items-center justify-center bg-gray-950/45 p-4 backdrop-blur-[2px]"
+  role="presentation"
+  (click)="cancelled.emit()"
+>
+  <section
+    class="w-full max-w-md overflow-hidden rounded-lg border border-gray-200 bg-white shadow-2xl"
+    role="alertdialog"
+    aria-modal="true"
+    aria-labelledby="confirm-dialog-title"
+    aria-describedby="confirm-dialog-message"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="flex items-start gap-3 p-5">
+      <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-red-50 text-red-600">
+        <i class="fa-regular fa-trash-can" aria-hidden="true"></i>
+      </span>
+      <div class="min-w-0 flex-1 pt-0.5">
+        <h2 id="confirm-dialog-title" class="text-base font-semibold text-gray-900">
+          {{ title }}
+        </h2>
+        <p id="confirm-dialog-message" class="mt-1.5 text-sm leading-5 text-gray-600">
+          {{ message }}
+        </p>
+      </div>
+      <button
+        type="button"
+        (click)="cancelled.emit()"
+        aria-label="Close confirmation dialog"
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-700"
+      >
+        <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+      </button>
+    </div>
+
+    <div class="flex justify-end gap-2 border-t border-gray-100 bg-gray-50 px-5 py-3.5">
+      <button
+        type="button"
+        (click)="cancelled.emit()"
+        class="rounded-lg border border-gray-200 bg-white px-3.5 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+      >
+        Cancel
+      </button>
+      <button
+        type="button"
+        (click)="confirmed.emit()"
+        class="rounded-lg bg-red-600 px-3.5 py-2 text-sm font-semibold text-white hover:bg-red-700 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+      >
+        {{ confirmLabel }}
+      </button>
+    </div>
+  </section>
+</div>

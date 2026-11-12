@@ -1,0 +1,7 @@
+.profile-cover {
+	background-color: #164e63;
+	background-image:
+		radial-gradient(circle at 1px 1px, rgb(255 255 255 / 18%) 1px, transparent 0),
+		linear-gradient(115deg, #123f67 0%, #087e83 100%);
+	background-size: 18px 18px, auto;
+}

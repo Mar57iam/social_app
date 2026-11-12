@@ -1,0 +1,27 @@
+<div class="min-h-screen bg-gray-100">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+
+    <div class="grid grid-cols-1 lg:grid-cols-[220px_minmax(0,1fr)_320px] gap-6">
+
+      <!-- Left Sidebar -->
+      <aside class="sticky top-24 hidden h-fit self-start lg:block">
+        <app-left-sidebar></app-left-sidebar>
+      </aside>
+
+      <!-- Feed -->
+      <main class="w-full gap-4 flex flex-col">
+        <app-create-post (postCreated)="getAllPostsData()"></app-create-post>
+          @for (post of postList; track post.id) {
+    <app-post-card [post]="post" (postChanged)="getAllPostsData()" />
+  }
+      </main>
+
+      <!-- Right Sidebar -->
+      <aside class="hidden lg:block">
+        <app-right-sidebar></app-right-sidebar>
+      </aside>
+
+    </div>
+
+  </div>
+</div>
